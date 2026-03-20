@@ -2,6 +2,7 @@ package com._bit.Unison.users.model;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.stereotype.Indexed;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -13,12 +14,26 @@ public class UserProfile {
     private String userId;
     private String displayName;
     private Set<String> courseIds;
+    @Indexed(unique = true)
+    private String email;
+    @Indexed(unique = true)
+    private String username;
+    @Indexed(unique = true)
+    private String normalizedEmail;
+    @Indexed(unique = true)
+    private String normalizedUsername;
+    private String passwordHash;
 
     public UserProfile(){}
 
-    public UserProfile(String dn, Set<String> cId){
-        this.displayName = dn;
-        this.courseIds = cId;
+    public UserProfile(String displayName, String email, String username, String normalizedEmail, String normalizedUsername, String passwordHash, Set<String> courseIds){
+        this.displayName = displayName;
+        this.courseIds = (courseIds == null) ? new HashSet<>() : new HashSet<>(courseIds);
+        this.email = email;
+        this.username = username;
+        this.normalizedEmail = normalizedEmail;
+        this.normalizedUsername = normalizedUsername;
+        this.passwordHash = passwordHash;
     }
 
     public String getUserId() {
@@ -31,6 +46,26 @@ public class UserProfile {
 
     public void updateDisplayName(String displayName){
         this.displayName = displayName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getNormalizedEmail() {
+        return normalizedEmail;
+    }
+
+    public String getNormalizedUsername() {
+        return normalizedUsername;
+    }
+
+    public String getPasswordHash() {
+        return passwordHash;
     }
 
     public Set<String> getCourseIds() {

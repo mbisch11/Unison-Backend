@@ -20,16 +20,19 @@ public class UserProfileController {
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	public UserProfile createUser(@RequestBody CreateUserRequest req) {
-		return userService.createUser(req.displayName, req.courseIds);
+		return userService.registerUser(req.displayName, req.email, req.username, req.rawPassword, req.courseIds);
 	}
 	
 	@GetMapping("/{id}")
-	public UserProfile getUser(@PathVariable("id") String uId) {
-		return userService.getUser(uId);
+	public UserProfile getUser(@PathVariable("id") String id) {
+		return userService.getUser(id);
 	}
 	
 	public static class CreateUserRequest {
 		public String displayName;
+		public String email;
+		public String username;
+		public String rawPassword;
 		public Set<String> courseIds;
 	}
 }
