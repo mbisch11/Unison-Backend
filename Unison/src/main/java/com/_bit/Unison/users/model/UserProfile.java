@@ -2,7 +2,7 @@ package com._bit.Unison.users.model;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.stereotype.Indexed;
+import org.springframework.data.mongodb.core.index.Indexed;
 
 import java.util.HashSet;
 import java.util.Set;
