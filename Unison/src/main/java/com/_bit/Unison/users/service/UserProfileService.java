@@ -22,7 +22,7 @@ public class UserProfileService {
 		this.userRepo = userRepo;
 	}
 
-	public UserProfile registerUser(String displayName, String email, String username, String rawPassword, Set<String> courseIds){
+	public UserProfile registerUser(String displayName, String email, String username, String password, Set<String> courseIds){
 		if (displayName == null || displayName.isBlank()){
 			throw new IllegalArgumentException("displayName is required");
 		} else if (email == null || email.isBlank()) {
@@ -33,7 +33,7 @@ public class UserProfileService {
 			throw new IllegalArgumentException("username is required");
 		} else if (!USERNAME_PATTERN.matcher(username).matches()) {
 			throw new IllegalArgumentException("username must be 3-20 characters and contain letters, numbers, or underscores");
-		} else if (rawPassword == null || rawPassword.length() < 8) {
+		} else if (password == null || password.length() < 8) {
 			throw new IllegalArgumentException("password must be at least 8 characters");
 		}
 
@@ -46,7 +46,7 @@ public class UserProfileService {
 			throw new IllegalArgumentException("username is already");
 		}
 
-		String passwordHash = passwordEncoder.encode(rawPassword);
+		String passwordHash = passwordEncoder.encode(password);
 
 		UserProfile user = new UserProfile(displayName.trim(), email.trim(), username.trim(), normalizedEmail, normalizedUsername, passwordHash, (courseIds == null) ? new HashSet<>() : courseIds);
 
@@ -54,6 +54,7 @@ public class UserProfileService {
 	}
 
 	public UserProfile authenticate(String emailOrUsername, String rawPassword){
+		System.out.println(emailOrUsername + "  " + rawPassword);
 		if (emailOrUsername == null || emailOrUsername.isBlank()){
 			throw new IllegalArgumentException("Email or Username is required");
 		} else if (rawPassword == null || rawPassword.isBlank()) {

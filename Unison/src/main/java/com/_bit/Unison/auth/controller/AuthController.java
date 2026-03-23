@@ -74,7 +74,7 @@ public class AuthController {
         public String displayName;
         public String email;
         public String username;
-        private String password;
+        public String password;
         public Set<String> courseIds;
         public Set<String> roles;
     }
