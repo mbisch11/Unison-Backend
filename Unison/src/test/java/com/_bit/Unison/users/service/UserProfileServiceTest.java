@@ -4,6 +4,7 @@ import com._bit.Unison.users.model.UserProfile;
 import com._bit.Unison.users.repo.UserProfileRepository;
 import org.junit.jupiter.api.Test;
 
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
@@ -16,11 +17,12 @@ class UserProfileServiceTest {
     void createUser_savesAndReturnsUser() {
         UserProfileRepository repo = mock(UserProfileRepository.class);
         UserProfileService service = new UserProfileService(repo);
+        HashSet<String> emptySet = new HashSet<String>();
 
-        UserProfile saved = new UserProfile("Michael", Set.of("HCDD440"));
+        UserProfile saved = new UserProfile("Michael", "test@email.com", "username", "test@email.com", "username", "234567mewciwinc3uedn", emptySet);
         when(repo.save(any(UserProfile.class))).thenReturn(saved);
 
-        UserProfile result = service.createUser("Michael", Set.of("HCDD440"));
+        UserProfile result = service.registerUser("Michael", "test@email.com", "username", "test@email.com", emptySet);
 
         assertNotNull(result);
         assertEquals("Michael", result.getDisplayName());
@@ -31,8 +33,9 @@ class UserProfileServiceTest {
     void getUser_whenFound_returnsUser() {
         UserProfileRepository repo = mock(UserProfileRepository.class);
         UserProfileService service = new UserProfileService(repo);
+        HashSet<String> emptySet = new HashSet<String>();
 
-        UserProfile u = new UserProfile("Michael", Set.of("HCDD440"));
+        UserProfile u = new UserProfile("Michael", "test@email.com", "username", "test@email.com", "username", "234567mewciwinc3uedn", emptySet);
         when(repo.findById("u1")).thenReturn(Optional.of(u));
 
         UserProfile result = service.getUser("u1");
