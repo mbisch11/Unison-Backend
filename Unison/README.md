@@ -1,77 +1,83 @@
-# Unison – Study Group Finder Backend
+# Unison Backend
 
-## Overview
+This is the backend for the Unison application. It is built using Spring Boot and MongoDB.
 
-Unison is a Spring Boot + MongoDB backend for a university-integrated study group platform. It allows students to create, discover, and manage course-based study sessions while tracking participation and enforcing accountability.
+## Prerequisites
 
-Built with:
+Before running this project, ensure you have:
+
 - Java 21
-- Spring Boot
-- MongoDB
-- Gradle
+- Gradle (or use included wrapper)
+- MongoDB (local or Atlas)
 
----
+Check versions:
 
-## Core Features
-
-### Authentication
-- Simulated login/logout
-- Session validation via `X-Session-Id`
-- Role-ready design
-
-### Users
-- Create user profiles
-- Retrieve user information
-- Associate users with course IDs
-
-### Study Groups
-- Create study sessions
-- Search/filter by course and time
-- Join / leave groups
-- Confirm attendance
-- Enforce capacity limits
-- List group members
-
----
-
-## Project Structure
-src/main/java/com/_bit/Unison/
-auth/
-users/
-groups/
+```
+java -version
+```
 
 
-Each package contains model, repository, service, and controller layers (where applicable).
+## Getting the Code
 
----
+1. Download the backend zip
+2. Extract it
+3. Navigate into the backend folder
 
-## Running the Application
+## Configuration
 
-### Requirements
-- Java 21
-- MongoDB running locally on port 27017
+Update your MongoDB connection in:
 
-### Mongo Configuration
-```properties
+```
+src/main/resources/application.properties
+```
+
+Example:
+
+```
 spring.data.mongodb.uri=mongodb://localhost:27017/unison
 ```
 
-### Run
-```agsl
+OR for MongoDB Atlas
+
+```
+spring.data.mongodb.uri=mongodb+srv://<username>:<password>@cluster.mongodb.net/unison
+```
+
+## Running the Application
+
+Using Gradle wrapper:
+```
 ./gradlew bootRun
 ```
 
-### Run Tests
-```agsl
-./gradlew test
+OR on Windows:
+```
+gradlew.bat bootRun
 ```
 
----
-## Contributions
 
-| Contributor      | Contribution                                                                                                                                            |
-|------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Michael Bischoff | Overall backend architecture design, Authentication System implementation, StudyGroupService, StudyGroupController, StudyGroupRepository implementation |
-| Angel Isardat    | Implemented UserProfile model, service, repository and controller, implemented search/filter query design                                               |
-| Zach Lucero      | Implemented GroupMembership model, repository, service and controller                                                                                   |
-| Brendan Chan     | Wrote all test cases as well as Study group model.                                                                                                      
+Alternatively, run from your IDE (recommended for development).
+
+## API Access
+
+Once running, backend will be available at: [http://localhost:8080]("http://localhost:8080")
+
+## Testing the API
+
+You can test endpoints using:
+
+- Postman
+- curl
+- Browser (for GET requests)
+
+## Project Structure
+
+- `controller/` - API endpoints
+- `service/` - Business logic
+- `repository/` - MongoDB access
+- `model/` - Data models
+
+## Notes
+
+- Make sure MongoDB is running before starting the backend
+- Frontend depends on this API being active
