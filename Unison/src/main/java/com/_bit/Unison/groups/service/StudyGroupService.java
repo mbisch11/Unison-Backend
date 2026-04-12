@@ -7,6 +7,7 @@ import com._bit.Unison.groups.model.StudyGroup;
 import com._bit.Unison.groups.repo.AttendanceEventRepository;
 import com._bit.Unison.groups.repo.GroupMembershipRepository;
 import com._bit.Unison.groups.repo.StudyGroupRepository;
+import com._bit.Unison.groups.repo.StudyGroupSearchRepository;
 import com._bit.Unison.users.model.UserProfile;
 import com._bit.Unison.users.repo.UserProfileRepository;
 import org.springframework.stereotype.Service;
@@ -20,13 +21,15 @@ public class StudyGroupService {
 
     private final SessionResolver sessionResolver;
     private final StudyGroupRepository groupRepo;
+    private final StudyGroupSearchRepository groupSearchRepo;
     private final GroupMembershipRepository membershipRepo;
     private final AttendanceEventRepository attendanceRepo;
     private final UserProfileRepository userRepo;
 
-    public StudyGroupService(SessionResolver sessionResolver, StudyGroupRepository groupRepo, GroupMembershipRepository membershipRepo, AttendanceEventRepository attendanceRepo, UserProfileRepository userRepo) {
+    public StudyGroupService(SessionResolver sessionResolver, StudyGroupRepository groupRepo, StudyGroupSearchRepository groupSearchRepo, GroupMembershipRepository membershipRepo, AttendanceEventRepository attendanceRepo, UserProfileRepository userRepo) {
         this.sessionResolver = sessionResolver;
         this.groupRepo = groupRepo;
+        this.groupSearchRepo = groupSearchRepo;
         this.membershipRepo = membershipRepo;
         this.attendanceRepo = attendanceRepo;
         this.userRepo = userRepo;
@@ -115,5 +118,18 @@ public class StudyGroupService {
             userRepo.findById(m.getUserId()).ifPresent(members::add);
         }
         return members;
+    }
+
+    public List<StudyGroup> getAvailableGroups(String sessionId, String courseId) {
+        sessionResolver.requireUserId(sessionId);
+        if (courseId == null || courseId.isBlank()){
+            throw new IllegalArgumentException("courseId required");
+        }
+        return groupSearchRepo.findAvailableGroups(courseId);
+    }
+
+    public List<StudyGroup> getMyCreatedGroups(String sessionId){
+        String userId = sessionResolver.requireUserId(sessionId);
+        return groupSearchRepo.findByCreator(userId);
     }
 }
