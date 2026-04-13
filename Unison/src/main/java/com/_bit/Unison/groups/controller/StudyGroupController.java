@@ -31,6 +31,21 @@ public class StudyGroupController {
         return groupService.searchGroups(sessionId, courseId, from, to, isVirtual);
     }
 
+    @GetMapping("/search")
+    public List<StudyGroup> searchGroupsDedicated(@RequestHeader("X-Session-Id") String sessionId, @RequestParam String courseId, @RequestParam(required = false) LocalDateTime from, @RequestParam(required = false) LocalDateTime to, @RequestParam(required = false) Boolean isVirtual){
+        return groupService.searchGroups(sessionId, courseId, from, to, isVirtual);
+    }
+
+    @GetMapping("/available")
+    public List<StudyGroup> getAvailableGroups(@RequestHeader("X-Session-Id") String sessionId, @RequestParam String courseId) {
+        return groupService.getAvailableGroups(sessionId, courseId);
+    }
+
+    @GetMapping("/my-created")
+    public List<StudyGroup> getMyCreatedGroups(@RequestHeader("X-Session-Id") String sessionId){
+        return groupService.getMyCreatedGroups(sessionId);
+    }
+
     @GetMapping("/{groupId}")
     public StudyGroup getGroup(@RequestHeader("X-Session-Id") String sessionId, @PathVariable String groupId) {
         return groupService.getGroup(sessionId, groupId);

@@ -8,6 +8,7 @@ import com._bit.Unison.groups.repo.AttendanceEventRepository;
 import com._bit.Unison.groups.repo.GroupMembershipRepository;
 import com._bit.Unison.groups.repo.StudyGroupRepository;
 import com._bit.Unison.groups.repo.StudyGroupSearchRepository;
+import com._bit.Unison.groups.service.filter.*;
 import com._bit.Unison.users.model.UserProfile;
 import com._bit.Unison.users.repo.UserProfileRepository;
 import org.springframework.stereotype.Service;
@@ -56,17 +57,22 @@ public class StudyGroupService {
 
         sessionResolver.requireUserId(sessionId);
 
-        if (courseId == null || courseId.isBlank()) throw new IllegalArgumentException("courseId required");
+        if (courseId == null || courseId.isBlank())
+            throw new IllegalArgumentException("courseId required");
 
-        if (from == null || to == null) {
-            return groupRepo.findByCourseId(courseId);
+        List<StudyGroup> candidates = groupRepo.findByCourseId(courseId);
+
+        GroupFilterContext context = new GroupFilterContext()
+                .addStrategy(new CourseFilterStrategy(courseId));
+
+        if (from != null && to != null) {
+            context.addStrategy(new TimeWindowFilterStrategy(from, to));
+        }
+        if (isVirtual != null) {
+            context.addStrategy(new VirtualFilterStrategy(isVirtual));
         }
 
-        if (isVirtual == null) {
-            return groupRepo.findByCourseIdAndStartTimeBetween(courseId, from, to);
-        }
-
-        return groupRepo.findByCourseIdAndIsVirtualAndStartTimeBetween(courseId, isVirtual, from, to);
+        return context.applyAll(candidates);
     }
 
     public void joinGroup(String sessionId, String groupId) {
@@ -122,14 +128,21 @@ public class StudyGroupService {
 
     public List<StudyGroup> getAvailableGroups(String sessionId, String courseId) {
         sessionResolver.requireUserId(sessionId);
-        if (courseId == null || courseId.isBlank()){
+
+        if (courseId == null || courseId.isBlank())
             throw new IllegalArgumentException("courseId required");
-        }
-        return groupSearchRepo.findAvailableGroups(courseId);
+
+        List<StudyGroup> candidates = groupSearchRepo.findByCourseId(courseId);
+
+        GroupFilterContext context = new GroupFilterContext()
+                .addStrategy(new CourseFilterStrategy(courseId))
+                .addStrategy(new AvailableGroupsFilterStrategy(membershipRepo));
+
+        return context.applyAll(candidates);
     }
 
     public List<StudyGroup> getMyCreatedGroups(String sessionId){
         String userId = sessionResolver.requireUserId(sessionId);
-        return groupSearchRepo.findByCreator(userId);
+        return groupSearchRepo.findByCreatedByUserId(userId);
     }
 }

@@ -1,18 +1,13 @@
 package com._bit.Unison.groups.repo;
 
 import com._bit.Unison.groups.model.StudyGroup;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;
-import java.time.LocalDateTime;
 
-public interface StudyGroupSearchRepository {
-    List<StudyGroup> findByCourse(String courseId);
+public interface StudyGroupSearchRepository extends MongoRepository<StudyGroup, String> {
 
-    List<StudyGroup> findByCourseAndTimeRange(String courseId, LocalDateTime from, LocalDateTime to, boolean isVirtual);
+    List<StudyGroup> findByCourseId(String courseId);
 
-    List<StudyGroup> findAvailableGroups(String courseId);
-
-    List<StudyGroup> findByCreator(String userId);
-
-    StudyGroup findByIdOrThrow(String groupId);
+    List<StudyGroup> findByCreatedByUserId(String userId);
 }
