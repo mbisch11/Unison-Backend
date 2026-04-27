@@ -10,6 +10,8 @@ public interface StudyGroupRepository extends MongoRepository<StudyGroup, String
 
     List<StudyGroup> findByCourseId(String courseId);
 
+    List<StudyGroup> findByCourseIdIgnoreCase(String courseId);
+
     List<StudyGroup> findByStartTimeBetween(LocalDateTime from, LocalDateTime to);
 
     List<StudyGroup> findByCourseIdAndStartTimeBetween(String courseId, LocalDateTime from, LocalDateTime to);

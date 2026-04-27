@@ -1,8 +1,10 @@
 package com._bit.Unison.groups.controller;
 
+import com._bit.Unison.common.FlexibleDateTimeParser;
+import com._bit.Unison.groups.dto.ManagedStudyGroupDto;
+import com._bit.Unison.groups.dto.StudyGroupMemberDto;
 import com._bit.Unison.groups.model.StudyGroup;
 import com._bit.Unison.groups.service.StudyGroupService;
-import com._bit.Unison.users.model.UserProfile;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,17 +25,22 @@ public class StudyGroupController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public StudyGroup createGroup(@RequestHeader("X-Session-Id") String sessionId, @RequestBody CreateGroupRequest req) {
-        return groupService.createGroup(sessionId, req.courseId, req.title, req.description, req.location, req.isVirtual, req.startTime, req.maxCapacity);
+        LocalDateTime startTime = FlexibleDateTimeParser.parseNullable(req.startTime, "startTime");
+        return groupService.createGroup(sessionId, req.courseId, req.title, req.description, req.location, req.isVirtual, startTime, req.maxCapacity, req.durationMinutes);
     }
 
     @GetMapping
-    public List<StudyGroup> searchGroups(@RequestHeader("X-Session-Id") String sessionId, @RequestParam String courseId, @RequestParam(required = false) LocalDateTime from, @RequestParam(required = false) LocalDateTime to, @RequestParam(required = false) Boolean isVirtual) {
-        return groupService.searchGroups(sessionId, courseId, from, to, isVirtual);
+    public List<StudyGroup> searchGroups(@RequestHeader("X-Session-Id") String sessionId, @RequestParam String courseId, @RequestParam(required = false) String from, @RequestParam(required = false) String to, @RequestParam(required = false) Boolean isVirtual) {
+        LocalDateTime fromDateTime = FlexibleDateTimeParser.parseNullable(from, "from");
+        LocalDateTime toDateTime = FlexibleDateTimeParser.parseNullable(to, "to");
+        return groupService.searchGroups(sessionId, courseId, fromDateTime, toDateTime, isVirtual);
     }
 
     @GetMapping("/search")
-    public List<StudyGroup> searchGroupsDedicated(@RequestHeader("X-Session-Id") String sessionId, @RequestParam String courseId, @RequestParam(required = false) LocalDateTime from, @RequestParam(required = false) LocalDateTime to, @RequestParam(required = false) Boolean isVirtual){
-        return groupService.searchGroups(sessionId, courseId, from, to, isVirtual);
+    public List<StudyGroup> searchGroupsDedicated(@RequestHeader("X-Session-Id") String sessionId, @RequestParam String courseId, @RequestParam(required = false) String from, @RequestParam(required = false) String to, @RequestParam(required = false) Boolean isVirtual){
+        LocalDateTime fromDateTime = FlexibleDateTimeParser.parseNullable(from, "from");
+        LocalDateTime toDateTime = FlexibleDateTimeParser.parseNullable(to, "to");
+        return groupService.searchGroups(sessionId, courseId, fromDateTime, toDateTime, isVirtual);
     }
 
     @GetMapping("/available")
@@ -42,8 +49,13 @@ public class StudyGroupController {
     }
 
     @GetMapping("/my-created")
-    public List<StudyGroup> getMyCreatedGroups(@RequestHeader("X-Session-Id") String sessionId){
+    public List<ManagedStudyGroupDto> getMyCreatedGroups(@RequestHeader("X-Session-Id") String sessionId){
         return groupService.getMyCreatedGroups(sessionId);
+    }
+
+    @GetMapping("/my-joined")
+    public List<ManagedStudyGroupDto> getMyJoinedGroups(@RequestHeader("X-Session-Id") String sessionId) {
+        return groupService.getMyJoinedGroups(sessionId);
     }
 
     @GetMapping("/{groupId}")
@@ -69,8 +81,25 @@ public class StudyGroupController {
         groupService.confirmAttendance(sessionId, groupId);
     }
 
+    @PostMapping("/{groupId}/rsvp")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void rsvpAttendance(@RequestHeader("X-Session-Id") String sessionId, @PathVariable String groupId) {
+        groupService.rsvpAttendance(sessionId, groupId);
+    }
+
+    @PostMapping("/{groupId}/attendance/{memberUserId}/verify")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void verifyAttendance(
+            @RequestHeader("X-Session-Id") String sessionId,
+            @PathVariable String groupId,
+            @PathVariable String memberUserId,
+            @RequestBody VerifyAttendanceRequest req
+    ) {
+        groupService.verifyAttendance(sessionId, groupId, memberUserId, req.attended);
+    }
+
     @GetMapping("/{groupId}/members")
-    public ArrayList<UserProfile> listMembers(@RequestHeader("X-Session-Id") String sessionId, @PathVariable String groupId) {
+    public ArrayList<StudyGroupMemberDto> listMembers(@RequestHeader("X-Session-Id") String sessionId, @PathVariable String groupId) {
         return groupService.listMembers(sessionId, groupId);
     }
 
@@ -80,7 +109,12 @@ public class StudyGroupController {
         public String description;
         public String location;
         public boolean isVirtual;
-        public LocalDateTime startTime;
+        public String startTime;
+        public int durationMinutes;
         public int maxCapacity;
+    }
+
+    public static class VerifyAttendanceRequest {
+        public boolean attended;
     }
 }

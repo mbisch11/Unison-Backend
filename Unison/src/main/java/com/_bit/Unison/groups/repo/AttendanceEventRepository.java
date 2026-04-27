@@ -10,4 +10,12 @@ public interface AttendanceEventRepository extends MongoRepository<AttendanceEve
     List<AttendanceEvent> findByUserId(String userId);
 
     List<AttendanceEvent> findByUserIdAndGroupId(String userId, String groupId);
+
+    List<AttendanceEvent> findByGroupId(String groupId);
+
+    List<AttendanceEvent> findByGroupIdAndUserId(String groupId, String userId);
+
+    boolean existsByUserIdAndGroupIdAndEventType(String userId, String groupId, String eventType);
+
+    boolean existsByGroupIdAndUserIdAndEventType(String groupId, String userId, String eventType);
 }

@@ -19,7 +19,13 @@ public class TimeWindowFilterStrategy implements GroupFilterStrategy {
     public List<StudyGroup> filter(List<StudyGroup> groups) {
         return groups.stream().filter(g -> {
             LocalDateTime t = g.getStartTime();
-            return t != null && !t.isBefore(from) && !t.isAfter(to);
+            if (t == null) {
+                return false;
+            }
+
+            boolean withinLowerBound = from == null || !t.isBefore(from);
+            boolean withinUpperBound = to == null || !t.isAfter(to);
+            return withinLowerBound && withinUpperBound;
         }).collect(Collectors.toList());
     }
 }

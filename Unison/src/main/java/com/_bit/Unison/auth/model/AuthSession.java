@@ -4,6 +4,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.Set;
 
 @Document(collection = "auth_sessions")
@@ -26,6 +27,7 @@ public class AuthSession {
 
     public String getSessionId() { return sessionId; }
     public String getUserId() { return userId; }
+    public Set<String> getRoles() { return roles == null ? Set.of() : new HashSet<>(roles); }
     public Instant getExpiresAt() { return expiresAt; }
 
     public boolean hasRole(String role) {

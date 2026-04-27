@@ -17,10 +17,28 @@ public class StudyGroup {
 	private boolean isVirtual;
 	private LocalDateTime startTime;
 	private LocalDateTime createdAt;
+	private int durationMinutes;
 	private int maxCapacity;
 	private String createdByUserId;
 
+	public StudyGroup() {
+	}
+
 	public StudyGroup(String courseId, String title, String description, String location, boolean isVirtual, LocalDateTime startTime, int maxCapacity, String createdByUserId){
+		this(courseId, title, description, location, isVirtual, startTime, 60, maxCapacity, createdByUserId);
+	}
+
+	public StudyGroup(
+			String courseId,
+			String title,
+			String description,
+			String location,
+			boolean isVirtual,
+			LocalDateTime startTime,
+			int durationMinutes,
+			int maxCapacity,
+			String createdByUserId
+	){
 		this.courseId = courseId;
 		this.title = title;
 		this.description = description;
@@ -28,6 +46,7 @@ public class StudyGroup {
 		this.isVirtual = isVirtual;
 		this.startTime = startTime;
 		this.createdAt = LocalDateTime.now();
+		this.durationMinutes = durationMinutes;
 		this.maxCapacity = maxCapacity;
 		this.createdByUserId = createdByUserId;
 	}
@@ -78,6 +97,10 @@ public class StudyGroup {
 
 	public LocalDateTime getCreatedAt() {
 		return createdAt;
+	}
+
+	public int getDurationMinutes() {
+		return durationMinutes;
 	}
 
 	public int getMaxCapacity() {

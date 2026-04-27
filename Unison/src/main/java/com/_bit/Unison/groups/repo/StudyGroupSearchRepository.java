@@ -9,5 +9,7 @@ public interface StudyGroupSearchRepository extends MongoRepository<StudyGroup, 
 
     List<StudyGroup> findByCourseId(String courseId);
 
+    List<StudyGroup> findByCourseIdIgnoreCase(String courseId);
+
     List<StudyGroup> findByCreatedByUserId(String userId);
 }

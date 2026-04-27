@@ -11,6 +11,9 @@ public class GroupMembership {
     private String userId;
     private boolean isLeader;
 
+    public GroupMembership() {
+    }
+
     public GroupMembership(String groupId, String userId, boolean isLeader){
         this.groupId = groupId;
         this.userId = userId;

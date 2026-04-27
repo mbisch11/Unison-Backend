@@ -27,12 +27,27 @@ public class UserProfileController {
 	public UserProfile getUser(@PathVariable("id") String id) {
 		return userService.getUser(id);
 	}
+
+	@PatchMapping("/me")
+	public UserProfile updateCurrentUser(
+			@RequestHeader("X-Session-Id") String sessionId,
+			@RequestBody UpdateCurrentUserRequest req
+	) {
+		return userService.updateCurrentUser(sessionId, req.displayName, req.email, req.username, req.courseIds);
+	}
 	
 	public static class CreateUserRequest {
 		public String displayName;
 		public String email;
 		public String username;
 		public String rawPassword;
+		public Set<String> courseIds;
+	}
+
+	public static class UpdateCurrentUserRequest {
+		public String displayName;
+		public String email;
+		public String username;
 		public Set<String> courseIds;
 	}
 }
